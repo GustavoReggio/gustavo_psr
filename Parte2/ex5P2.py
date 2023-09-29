@@ -89,7 +89,7 @@ import readchar
 
 # Linha d)
 
-def countNumbersUpto(stop_char):
+"""def countNumbersUpto(stop_char):
     print("Enter a letter: ")
     
     keys =[]
@@ -112,16 +112,15 @@ def countNumbersUpto(stop_char):
     
     print(f"The numbers that you've pressed are: {str(n_numeric)}")
     keyNum.sort()
-    print(keyNum)
+    print(keyNum)"""
 
 
 # Linha e)
 
-"""def countNumbersUpto(stop_char):
+def countNumbersUpto(stop_char):
     print("Enter a letter: ")
     
     keys =[]
-    #new_keys = [keys.append(key) in keys while readchar.readkey()]
     while True:
         key= readchar.readkey()
         keys.append(key)
@@ -133,19 +132,21 @@ def countNumbersUpto(stop_char):
     print(keys)
 
     n_numeric = 0
-    #keyNum =[]
-    #new_keyNum =[key for keys in keyNum if key.isnumeric()]
-    
-    #for key in keys:
-        #if key.isnumeric():
-            #n_numeric +=1
-            #keyNum.append(key)
-    #print(f"The numbers that you've pressed are: {str(n_numeric)}")
-    #print(new_keyNum)
-    newlist = [key for key in keys key.isnumeric()]
-    print(newlist)"""
-    
 
+    for key in keys:
+        if key.isnumeric():
+            n_numeric +=1
+            
+    
+    print(f"The numbers that you've pressed are: {str(n_numeric)}")
+
+    numKey = [x for x in keys]
+    print('Numerical Key: '+ str(numKey))
+
+    dic_keys= {idx:x for idx, x in enumerate(keys)}
+    print('Numerical dicionar:'+ str(dic_keys))
+    
+    
 
 def main():
     countNumbersUpto('x')
