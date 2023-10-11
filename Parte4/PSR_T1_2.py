@@ -177,9 +177,9 @@ def dictionary(l,i,lst,elapsed_time,dt_end,dt_begin,hit_time,miss_time):
     for p in range(0,len(lst)):                 #used in order to calculate average duration
         q += lst[p].duration
     
-    d["type_average_duration"]="%.2f" %(q/elapsed_time)
-    d["type_hit_average_duration"]="%.2f" %(hit_time/elapsed_time)
-    d["type_miss_average_duration"]="%.2f" %(miss_time/elapsed_time)
+    d["type_average_duration"]="%.2f" %(q/i)
+    d["type_hit_average_duration"]="%.2f" %(hit_time/i)
+    d["type_miss_average_duration"]="%.2f" %(miss_time/i)
     
     pprint(d)
     
