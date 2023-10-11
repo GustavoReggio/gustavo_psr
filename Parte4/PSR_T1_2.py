@@ -98,7 +98,7 @@ def use_words_characters(use_words,max_value,use_time_mode): #words or single ch
                 
                 x = r.readkey()
                 w += x                         #key is read and saved
-                print(x,end="", flush=True)
+                print(x,end="", flush=True)    #To display what the user are writing
 
                 if x != r.key.SPACE:           #In case of space
                     if len(w) == len(y):       #stops
