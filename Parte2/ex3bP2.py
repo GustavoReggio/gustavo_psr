@@ -35,7 +35,7 @@ def main():
     #parser.add_argument('-mn', '--maximum_number' type=int, help='max number.')
     parser.add_argument('-n', '--name', type=str, help= 'A name to print.', required = False, default='Antônio')
 
-    args =vers(parser.parse_args)
+    args =vars(parser.parse_args())
     print(args)
 
     print('tarting to compute perfect numbers up to' + str(args[maxNum]))
