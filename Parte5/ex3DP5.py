@@ -20,13 +20,13 @@ import json
 
 
 
-def onTrackbar(B_min, B_max, G_min, G_max, R_min, R_max, image, window_name):  
+def onTrackbar(B_min, B_max, G_min, G_max, R_min, R_max, image_gray, window_name):  
     """Esta função permite criar o Trackbar, que fará com que o utilizador deslize por toda a gama de paletas"""
 
     #_,image_threshold = cv2.threshold(image_gray, threshold, 255, cv2.THRESH_BINARY)
     #cv2.imshow(window_name,image_threshold)
 
-    mask = cv2.inRange(image,(B_min,G_min,R_min),(B_max,G_max,R_max))
+    mask = cv2.inRange(image_gray,(B_min,G_min,R_min),(B_max,G_max,R_max))
     cv2.imshow(window_name, mask)
     
 
@@ -40,11 +40,11 @@ def main():
                         default='/home/gustavo/Imagens/imagens_psr/atlascar.png')
     args = vars(parser.parse_args())
 
-    image = cv2.imread(args['image'], cv2.IMREAD_COLOR)
-    cv2.imshow(window_original, image)
+    image_RGB = cv2.imread(args['image'], cv2.IMREAD_COLOR)
+    cv2.imshow(window_original, image_RGB)
     
-    #threshold = 0
-    #image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)    #convert bgr to gray image (single channel)
+    
+    image_gray = cv2.cvtColor(image_RGB, cv2.COLOR_BGR2HSV)    #convert bgr to gray image (single channel)
 
 
     # add code to create the trackbar ...
@@ -52,24 +52,30 @@ def main():
     cv2.namedWindow(window_name)
 
     B_min = 0
-    B_max = 0
+    B_max = 255
     G_min = 0
-    G_max = 0
+    G_max = 255
     R_min = 0
-    R_max = 0
+    R_max = 255
 
-    cv2.createTrackbar('min B', window_name, 0, 255,
-                       partial(onTrackbar, B_min=B_min ,image=image, window_name=window_name))
-    cv2.createTrackbar('max B', window_name, 0, 255,
-                       partial(onTrackbar,B_max=B_max , image=image, window_name=window_name))
-    cv2.createTrackbar('min G', window_name, 0, 255,
-                       partial(onTrackbar,G_min=G_min , image=image, window_name=window_name))
-    cv2.createTrackbar('max G', window_name, 0, 255,
-                       partial(onTrackbar,G_max=G_max , image=image, window_name=window_name))
-    cv2.createTrackbar('min R', window_name, 0, 255,
-                       partial(onTrackbar,R_min=R_min , image=image, window_name=window_name))
-    cv2.createTrackbar('max R', window_name, 0, 255,
-                       partial(onTrackbar,R_max=R_max , image=image, window_name=window_name))
+
+    cv2.createTrackbar('min B', window_name, B_min, 255,
+                       partial(onTrackbar, B_min=B_min ,image_gray=image_gray, window_name=window_name))
+    
+    cv2.createTrackbar('max B', window_name,0, B_max,
+                       partial(onTrackbar,B_max=B_max , image_gray=image_gray, window_name=window_name))
+    
+    cv2.createTrackbar('min G', window_name, G_min, 255,
+                       partial(onTrackbar,G_min=G_min , image_gray=image_gray, window_name=window_name))
+    
+    cv2.createTrackbar('max G', window_name, 0, G_max,
+                       partial(onTrackbar,G_max=G_max , image_gray=image_gray, window_name=window_name))
+    
+    cv2.createTrackbar('min R', window_name, R_min, 255,
+                       partial(onTrackbar,R_min=R_min , image_gray=image_gray, window_name=window_name))
+    
+    cv2.createTrackbar('max R', window_name, 0, R_max,
+                       partial(onTrackbar,R_max=R_max , image_gray=image_gray, window_name=window_name))
     
     cv2.setTrackbarPos('min B', window_name, B_min)
     cv2.setTrackbarPos('max B', window_name, B_max)
@@ -78,7 +84,9 @@ def main():
     cv2.setTrackbarPos('min R', window_name, R_min)
     cv2.setTrackbarPos('max R', window_name, R_max)
 
-    onTrackbar(B_min, B_max, G_min, G_max, R_min, R_max, image, window_name)
+
+
+    onTrackbar(B_min, B_max, G_min, G_max, R_min, R_max, image_gray, window_name)
     cv2.waitKey(0)
 
 if __name__ == '__main__':

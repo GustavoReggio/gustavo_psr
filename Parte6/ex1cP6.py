@@ -26,7 +26,7 @@ def MouseCallback(event, x, y, flags, param, image, drawing_data):           #Fl
         drawing_data['pencil_down'] = False
 
     if drawing_data['pencil_down'] == True:
-        cv2.line(image, (drawing_data['previous_x'],drawing_data['previous_y']), (x,y), (255,255,255), 1) #em comparação com o 
+        cv2.line(image, (drawing_data['previous_x'],drawing_data['previous_y']), (x,y), drawing_data['color'], 1) #em comparação com o 
                                                                                 #outro este desenha linhas contínuas
     
     drawing_data['previous_x'] = x
@@ -43,14 +43,10 @@ def main():
                         default='/home/gustavo/Imagens/imagens_psr/atlascar.png')
     args = vars(parser.parse_args())
     
-    
     image= cv2.imread(args['image'], cv2.IMREAD_COLOR)     #Load an image
-
    
-    
-    
-    
     drawing_data = {'pencil_down': False,'previous_x': 0,'previous_y': 0, 'color': (255,255,255)}
+
     cv2.namedWindow('Images')                               #criar janela:
     cv2.setMouseCallback('Images', partial(MouseCallback, image=image,drawing_data=drawing_data))
 
@@ -84,17 +80,18 @@ def main():
         if key == ord('q'):              #quit program
             print("Quiting Program")
             break
+
         elif key == ord('r'):
             print('Selecting red color')
-            drawing_data['color'] = (0,0,255)
+            drawing_data ['color'] = (0,0,255)
 
         elif key == ord('g'):
             print('Selecting green color')
-            drawing_data['color'] = (255,0,0)
+            drawing_data ['color'] = (255,0,0)
 
         elif key == ord('b'):
             print('Selecting blue color')
-            drawing_data['color'] = (0,255,0)
+            drawing_data ['color'] = (0,255,0)
 
     #--------------------------------------------
     # Termination 
