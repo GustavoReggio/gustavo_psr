@@ -13,7 +13,7 @@ import linecache
 def PainT():
 
     white_secreen = numpy.ones((500,500,3), dtype=numpy.uint8)*255
-    drawing_data = {'pencil_down': False,'previous_x': 0,'previous_y': 0, 'color': (255,255,255)}
+    drawing_data = {'pencil_down': False,'previous_x': 0,'previous_y': 0, 'color': (255,255,255), 'tamanho': ()}
 
     if event == cv2.EVENT_LBUTTONDOWN:                  #Se acaso o botão do maouse for precionado.
         drawing_data['pencil_down'] = True                           #Pencil_down tem q ser uma variável imutável e portanto leva [0].
@@ -136,7 +136,7 @@ def Frame_HSV(low_H, low_S, low_V, high_H, high_S, high_V):
             break
 
         elif key == ord('q'):
-            print("Quiting Program without saving limits.")
+            print("Quiting Program.")
             break
         
         frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -148,6 +148,39 @@ def Frame_HSV(low_H, low_S, low_V, high_H, high_S, high_V):
         cv2.imshow(window_detection_name, frame_threshold)
         ## [show]
 
+    Object_locatiN(frame_threshold)
+
+
+def Object_locatiN(frame_threshold):
+    
+    connectivity = 4
+
+    # Perform the operation
+    object_detection = cv2.connectedComponentsWithStats(frame_threshold, connectivity, cv2.CV_32S)
+    # Get the results
+    # The first cell is the number of labels
+    num_labels = object_detection[0]
+    # The second cell is the label matrix
+    labels = object_detection[1]
+    # The third cell is the stat matrix
+    stats = object_detection[2]
+    # The fourth cell is the centroid matrix
+    centroids = object_detection[3]
+    
+    # Initialize a new image to store  
+    # all the output components 
+    output = numpy.zeros(frame_threshold.shape, dtype="uint8") 
+    
+    # Loop through each component 
+    for i in range(1, num_labels): 
+        
+        # Area of the image 
+        area = stats[i, cv2.CC_STAT_AREA]  
+        
+        if (area > 140) and (area < 400): 
+            componentMask = (labels == i).astype("uint8") * 255
+            output = cv2.bitwise_or(output, componentMask) 
+    
 
 def main():
     
