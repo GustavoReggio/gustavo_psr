@@ -10,15 +10,7 @@ import color_segmenter1
 import numpy
 import linecache
 
-##arguments
-def arguments(args):
-    parser = argparse.ArgumentParser(description='Menu of Drawing Mode')
-    parser.add_argument('-j JSON', '--json JSON', help=Fore.LIGHTYELLOW_EX+'Full path to json file'+Style.RESET_ALL,
-                        default='/home/gustavo/Documentos/PSR/gustavo_psr/Parte7/limits.json', type=int, required=True)
-    args = parser.parse_args()
-
-
-def Paint():
+def PainT():
 
     white_secreen = numpy.ones((500,500,3), dtype=numpy.uint8)*255
     drawing_data = {'pencil_down': False,'previous_x': 0,'previous_y': 0, 'color': (255,255,255)}
@@ -36,6 +28,7 @@ def Paint():
     
     drawing_data['previous_x'] = x
     drawing_data['previous_y'] = y
+
     while True:                         #para a imagem ficar se atualizando o desenho 
         cv2.imshow('White Screen', white_secreen)
         key = cv2.waitKey(50)
@@ -75,26 +68,64 @@ def Paint():
     pass
 
 
-def limits():
- 
- with open('limits.json', 'r') as file_handle:
-        
-    low_H = linecache.getlin(args,4,module_globals=None)
-    low_S = linecache.getlin(args,8,module_globals=None)
-    low_V = linecache.getlin(args,12,module_globals=None)
-    high_H = linecache.getlin(args,5,module_globals=None)
-    high_S = linecache.getlin(args,9,module_globals=None)
-    high_V = linecache.getlin(args,13,module_globals=None)  
+def LimitS(args):
 
-    return low_H, low_S, low_V, high_H, high_S, high_V
+    """
+    This function is only for reading the values of the json file.
+    """
+    
+    #Reading Values from limits.json
+    with open(args, 'r') as file_handle:
+        load_file = json.load(file_handle)
+           
+
+    limits_file = load_file['limits']
+    print('Carregou o dcio...')
+
+    #loading Limits B
+    B_limits = limits_file['B']
+    low_H = B_limits['min']
+    print("B min " + str(low_H))
+
+    high_H = B_limits['max']
+    print("B min " + str(high_H))
+
+    #loading Limits G 
+    G_limits = limits_file['G']
+    low_S = G_limits['min']
+    print("G max " + str(low_S))
+
+    high_S = G_limits['max']
+    print("G max " + str(high_S))
+
+    #loading Limits R
+    R_limits = limits_file['R']
+    low_V = R_limits['min']
+    print("R max " + str(low_V))
+
+    high_V = R_limits['max']
+    print("R max " + str(high_V))
+
+    #return low_H, low_S, low_V, high_H, high_S, high_V
+    Frame_HSV(low_H, low_S, low_V, high_H, high_S, high_V)
 
 
-def Frame_HSV():
+def Frame_HSV(low_H, low_S, low_V, high_H, high_S, high_V):
 
-    cap = cv2.VideoCapture()
     window_capture_name = 'Video Capture'
     window_detection_name = 'Object Detection'
+    
+    print('vídeo ativo')
 
+    parser = argparse.ArgumentParser('Menu of Saving limits')
+    parser.add_argument('-c','--camera', help='', default=0, type=int, required=False)
+    args = parser.parse_args()
+
+    cap = cv2.VideoCapture(args.camera)
+    
+    cv2.namedWindow(window_capture_name)
+    cv2.namedWindow(window_detection_name)
+    
     
     while True:
         ## [while]
@@ -119,9 +150,19 @@ def Frame_HSV():
 
 
 def main():
+    
+    parser = argparse.ArgumentParser(description='Menu of Drawing Mode')
+    parser.add_argument('-j', '--json',type=str, help=Fore.LIGHTYELLOW_EX+'Full path to json file'+Style.RESET_ALL,
+                        default='/home/gustavo/Documentos/PSR/gustavo_psr/Parte7/limits.json', required=False)
+    args = vars(parser.parse_args())
+    
+    if args == False:
+            print('File should be in another directory.')
+        
+   
 
-    Frame_HSV()
-    arguments()
-
+    LimitS(args['json'])
+    #Frame_HSV()
+    
 if __name__ == '__main__':
     main()
