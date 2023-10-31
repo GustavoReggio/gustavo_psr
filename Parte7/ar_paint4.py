@@ -19,7 +19,7 @@ import readchar
 brush_stats = {'size':10,'color':(0,0,0),'previous_x': 0,'previous_y': 0}
 
 
-def arguments():
+def ArgumentS():
 
     """
     This function is only for creating the arguments which the user must input.
@@ -30,7 +30,7 @@ def arguments():
     return args
 
 
-def keyboardpress(brush_stats,copypaint,img):
+def KeyboardpresS(brush_stats,copypaint,img):
     quiting = 0
     cl = 0
     key_pressed = cv2.waitKey(50) & 0xFF
@@ -93,11 +93,33 @@ def keyboardpress(brush_stats,copypaint,img):
     
     
     return cl , quiting
+
+
+def Shake_PreventioN(event, x, y, flags, param, copypain, drawing_data):
+
+    
+    drawing_data = {'pencil_down': False,'previous_x': 0,'previous_y': 0, 'color': (255,255,255)}
+
+    if event == cv2.EVENT_LBUTTONDOWN:                  #Se acaso o botão do maouse for precionado.
+        drawing_data['pencil_down'] = True              #Pencil_down tem q ser uma variável imutável e portanto leva [0].
+        print('x = ' +str(x), ',y = '+str(y))
+
+    elif event == cv2.EVENT_LBUTTONUP:
+        drawing_data['pencil_down'] = False
+
+    if drawing_data['pencil_down'] == True:
+        cv2.line(copypaint, (drawing_data['previous_x'],drawing_data['previous_y']), (x,y), drawing_data['color'], 1)
+                                                                                
+    
+    drawing_data['previous_x'] = x
+    drawing_data['previous_y'] = y
+
+    cv2.setMouseCallback(copypaint ,drawing_data)
             
     
     
 
-def show_webcam(low_H, low_S, low_V, high_H, high_S, high_V ,brush_stats=brush_stats, mirror=False):
+def Show_webcaM(low_H, low_S, low_V, high_H, high_S, high_V ,brush_stats=brush_stats, mirror=False):
 
     cam = cv2.VideoCapture(0)
     ret_val, img = cam.read()
@@ -108,7 +130,7 @@ def show_webcam(low_H, low_S, low_V, high_H, high_S, high_V ,brush_stats=brush_s
 
     while True:
         
-        c, quiting = keyboardpress(brush_stats,copypaint,img)
+        c, quiting = KeyboardpresS(brush_stats,copypaint,img)
         ret_val, img = cam.read()
         
         if mirror:
@@ -188,10 +210,12 @@ def show_webcam(low_H, low_S, low_V, high_H, high_S, high_V ,brush_stats=brush_s
 
     cam.release()
     cv2.destroyAllWindows()
+
+    return paintWindow
     
     
 
-def limits(json_file):
+def LimitS(json_file):
  
     """
     This function is only for reading the values of the json file.
@@ -235,10 +259,10 @@ def main():
 
     global brush_stats
     global copypaint
-    args = arguments()
+    args = ArgumentS()
     json_file = args.json
-    low_H, low_S, low_V, high_H, high_S, high_V= limits(json_file)
-    show_webcam(low_H, low_S, low_V, high_H, high_S, high_V, mirror=True)
+    low_H, low_S, low_V, high_H, high_S, high_V= LimitS(json_file)
+    Show_webcaM(low_H, low_S, low_V, high_H, high_S, high_V, mirror=True)
     
     
 
