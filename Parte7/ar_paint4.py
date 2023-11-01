@@ -13,11 +13,13 @@ import numpy as np
 import linecache
 import os
 import readchar
+from functools import partial
 #import imutils
 
 
-brush_stats = {'size':10,'color':(0,0,0),'previous_x': 0,'previous_y': 0}
+brush_stats = {'pencil_down': False, 'size':10,'color':(0,0,0),'previous_x': 0,'previous_y': 0}
 
+drawing_data = {'pencil_down': False,'previous_x': 0,'previous_y': 0, 'color': (0,0,0),'size':10}
 
 def ArgumentS():
 
@@ -31,6 +33,7 @@ def ArgumentS():
 
 
 def KeyboardpresS(brush_stats,copypaint,img):
+    #mouse = 0
     quiting = 0
     cl = 0
     key_pressed = cv2.waitKey(50) & 0xFF
@@ -82,6 +85,10 @@ def KeyboardpresS(brush_stats,copypaint,img):
     elif key_pressed == ord('c'):
         cl = 1
         print('Cleared Canvas')
+    
+    elif key_pressed == ord('m'):
+        mouse = 1
+        print('Selecting Pensil Drawing')
         
 
     elif key_pressed == ord('w'):
@@ -91,15 +98,13 @@ def KeyboardpresS(brush_stats,copypaint,img):
 
         cv2.imwrite(file_name , copypaint) #! Caso seja com o video pode ter de se mudar aqui
     
-    
+    if
     return cl , quiting
 
 
-def Shake_PreventioN(event, x, y, flags, param, copypain, drawing_data):
+def Shake_PreventioN(event, x, y, flags, param, paintWindow, drawing_data):
 
     
-    drawing_data = {'pencil_down': False,'previous_x': 0,'previous_y': 0, 'color': (255,255,255)}
-
     if event == cv2.EVENT_LBUTTONDOWN:                  #Se acaso o botão do maouse for precionado.
         drawing_data['pencil_down'] = True              #Pencil_down tem q ser uma variável imutável e portanto leva [0].
         print('x = ' +str(x), ',y = '+str(y))
@@ -108,28 +113,29 @@ def Shake_PreventioN(event, x, y, flags, param, copypain, drawing_data):
         drawing_data['pencil_down'] = False
 
     if drawing_data['pencil_down'] == True:
-        cv2.line(copypaint, (drawing_data['previous_x'],drawing_data['previous_y']), (x,y), drawing_data['color'], 1)
-                                                                                
-    
+
+        cv2.line(paintWindow, (drawing_data['previous_x'],drawing_data['previous_y']), (x,y),
+                  drawing_data['color'],drawing_data['size'], 1)
+        print('desenhando c rato')
+
     drawing_data['previous_x'] = x
-    drawing_data['previous_y'] = y
+    drawing_data['previous_y'] = y                                                                         
+    #brush_stats['previous_x'] = cx
+    #brush_stats['previous_y'] = cy
+ 
 
-    cv2.setMouseCallback(copypaint ,drawing_data)
-            
-    
-    
-
-def Show_webcaM(low_H, low_S, low_V, high_H, high_S, high_V ,brush_stats=brush_stats, mirror=False):
+def Show_webcaM(low_H, low_S, low_V, high_H, high_S, high_V ,brush_stats=brush_stats, drawing_data=drawing_data, mirror=False):
 
     cam = cv2.VideoCapture(0)
     ret_val, img = cam.read()
     paintWindow = np.zeros((img.shape)) + 255
     copypaint = deepcopy(paintWindow)
-
+    mouse = 0
     
 
+
     while True:
-        
+
         c, quiting = KeyboardpresS(brush_stats,copypaint,img)
         ret_val, img = cam.read()
         
@@ -187,31 +193,48 @@ def Show_webcaM(low_H, low_S, low_V, high_H, high_S, high_V ,brush_stats=brush_s
             cv2.drawMarker(img, (cx, cy), color=[0, 0, 255], thickness=7,
                            markerType= cv2.MARKER_TILTED_CROSS, line_type=cv2.LINE_AA,markerSize=30)
             
-            cv2.line(paintWindow,(brush_stats['previous_x'],brush_stats['previous_y']), 
-                     (cx,cy), brush_stats['color'], brush_stats['size'])
-            
             cv2.circle(hsv,(cx,cy),55,(0,0,255),-1)
+            
+            if mouse == 0:
+
+                print("Desenhando com o celular")
+                print(mouse)   
+                cv2.line(paintWindow,(brush_stats['previous_x'],brush_stats['previous_y']), 
+                         (cx,cy), brush_stats['color'], brush_stats['size'])
+                
+                brush_stats['previous_x'] = cx
+                brush_stats['previous_y'] = cy
+            
             #cv2.circle(paintWindow,(cx,cy),brush_stats['size'],brush_stats['color'],-1)
             copypaint = deepcopy(paintWindow) 
-            
-            brush_stats['previous_x'] = cx
-            brush_stats['previous_y'] = cy
-        
+
+            if key_pressed == ord('m'):
+
+                mouse = 1
+                print('Selecting Pensil Drawing')
+                print('entrou no mouse')   
+                
+                cv2.setMouseCallback('Drawing' ,partial(Shake_PreventioN, paintWindow=paintWindow, brush_stats=brush_stats))
+
             # Display the largest component mask and the image with the centroid
             #cv2.imshow('Largest Component Mask', largest_component_mask)
+
+            
             
         cv2.imshow('mask',mask)
         cv2.imshow('Image with Centroid', img)
-        cv2.imshow('drawing', paintWindow)
+        cv2.imshow('Drawing', paintWindow)
         
         
         if cv2.waitKey(1) == 27:
             break  # Close the window if the 'Esc' key is pressed
 
+
+    
     cam.release()
     cv2.destroyAllWindows()
 
-    return paintWindow
+    #return paintWindow
     
     
 
