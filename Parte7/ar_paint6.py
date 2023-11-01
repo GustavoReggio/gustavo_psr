@@ -17,8 +17,8 @@ from functools import partial
 from collections import namedtuple
 from math import sqrt
 
-import tkinter as tk
-from tkinter import messagebox, Tk, Frame, Menu
+import puzzle
+from formats import drawRectangle, drawCircle, drawEllipse
 
 #import imutils
 
@@ -29,7 +29,7 @@ usp_sensitivity = 1000
 
 
 # NEEDS CORRECTION
-def KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch,mouse):
+def KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch,mouse,flip_flop,shape_points,puzzle_mode):
     key_pressed = cv2.waitKey(50) & 0xFF
 
     if key_pressed == ord('q'):
@@ -104,6 +104,39 @@ def KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch,mouse):
         mouse = False
         print('Vídeo Mode selected')
     
+
+    elif key_pressed == ord('v'):
+        flip_flop['switcher'] = not flip_flop['switcher']
+    
+    elif key_pressed == ord('k'):
+        
+        rectangle_conditions = (flip_flop['c_counter'] == 0) and (flip_flop['e_counter'] == 0) and len(centroids['x'])>=2
+
+        if rectangle_conditions :
+            flip_flop['r_counter'] += 1
+
+            if flip_flop['r_counter'] == 1:
+                shape_points['ipoints'] = (centroids['x'][-2],centroids['y'][-2] )
+    
+    elif key_pressed == ord('o'):
+
+        circle_conditions = (flip_flop['r_counter'] == 0) and (flip_flop['e_counter'] == 0) and len(centroids['x'])>=2
+
+        if circle_conditions :
+            flip_flop['c_counter'] += 1
+
+            if flip_flop['c_counter'] == 1:
+                shape_points['ipoints'] = (centroids['x'][-2],centroids['y'][-2] )
+           
+    elif key_pressed == ord('e'):
+
+        elipse_conditions = (flip_flop['r_counter'] == 0) and (flip_flop['c_counter'] == 0) and len(centroids['x'])>=2
+
+        if elipse_conditions :
+            flip_flop['e_counter'] += 1
+
+            if flip_flop['e_counter'] == 1:
+                shape_points['ipoints'] = (centroids['x'][-2],centroids['y'][-2] )
     
     
     
@@ -386,57 +419,7 @@ def main():
             cv2.imshow('paintwindow',copypaint)
         else:
             cv2.imshow('paintCam',copyimg)
-
-
-    # root window
-    root = Tk()
-    root.geometry('320x150')
-    root.title('Menu Demo')
-
-
-    # create a menubar
-    menubar = Menu(root)
-    root.config(menu=menubar)
-
-    # create the file_menu
-    file_menu = Menu(
-        menubar,
-        tearoff=0
-    )
-
-    # add menu items to the File menu
-    file_menu.add_command(label='New')
-    file_menu.add_command(label='Open...')
-    file_menu.add_command(label='Close')
-    file_menu.add_separator()
-
-    # add Exit menu item
-    file_menu.add_command(
-        label='Exit',
-        command=root.destroy
-    )
-
-    # add the File menu to the menubar
-    menubar.add_cascade(
-        label="File",
-        menu=file_menu
-    )
-    # create the Help menu
-    help_menu = Menu(
-        menubar,
-        tearoff=0
-    )
-
-    help_menu.add_command(label='Welcome')
-    help_menu.add_command(label='About...')
-
-    # add the Help menu to the menubar
-    menubar.add_cascade(
-        label="Help",
-        menu=help_menu
-    )
-
-    root.mainloop()
+    
 
 if __name__ == '__main__':
     main()
