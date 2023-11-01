@@ -98,6 +98,10 @@ def KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch,mouse):
         mouse = True
         print('Mouse Mode selected')
     
+    elif key_pressed == ord('i'):
+        mouse = False
+        print('Vídeo Mode selected')
+    
     
     
     
