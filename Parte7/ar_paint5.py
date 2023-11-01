@@ -23,11 +23,11 @@ from math import sqrt
 
 brush_stats = {'pencil_down': False,'size':10,'color':(0,0,0),'previous_x': 0,'previous_y': 0}
 centroid_tuple = namedtuple('centroid_tuple',['x','y'])
-usp_sensitivity = 100
+usp_sensitivity = 1000
 
 
 # NEEDS CORRECTION
-def KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch):
+def KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch,mouse):
     key_pressed = cv2.waitKey(50) & 0xFF
 
     if key_pressed == ord('q'):
@@ -97,11 +97,11 @@ def KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch):
     elif key_pressed == ord('m'):
         mouse = True
         print('Mouse Mode selected')
-        
     
     
     
-    return copyimg,copypaint,centroids,switch
+    
+    return copyimg,copypaint,centroids,switch, mouse
 
 
 def mouseCallback(event,x,y,flag,param,copypaint,brush_stats):
@@ -122,7 +122,20 @@ def mouseCallback(event,x,y,flag,param,copypaint,brush_stats):
     brush_stats['previous_x'] = x
     brush_stats['previous_y'] = y
 
-    cv2.setMouseCallback(copypaint,brush_stats)
+    #cv2.setMouseCallback('paintwindow',copypaint,brush_stats)
+
+def SelectingMode (img,mask,copypaint,copyimg,centroids,brush_stats,usp,switch,mouse):
+
+
+    if mouse == True:
+        #print("Entrou no modo mause")
+        #partial(mouseCallback(copypaint=copypaint,brush_stats=brush_stats))  
+        cv2.setMouseCallback('paintwindow',partial(mouseCallback,copypaint=copypaint,brush_stats=brush_stats))
+
+    elif mouse ==False:
+        draw(img,mask,copypaint,copyimg,centroids,brush_stats,usp,switch)
+
+
 
 
 def drawLine(copyimg,copypaint,points,brush_stats,usp,switch):
@@ -293,7 +306,7 @@ def main():
 
     brush_stats = {'size' : 10, 'color' : (0,0,0)}
     
-   
+    mouse =False
 
     #cv2.namedWindow("Drawing")
     #cv2.setMouseCallback("Drawing",partial(mouseCallback,points = centroids))
@@ -351,11 +364,15 @@ def main():
         
 
         # draw(img, mask,src_copypaint,centroids,brush_stats,usp,flip_flop,shape_points,puzzle_mode)
+
+        copyimg, copypaint, centroids, switch, mouse = KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch, mouse) 
+        SelectingMode(img,mask,copypaint,copyimg,centroids,brush_stats,usp,switch, mouse)
+
+        #draw(img,mask,copypaint,copyimg,centroids,brush_stats,usp,switch)
+
+           
         
-        draw(img,mask,copypaint,copyimg,centroids,brush_stats,usp,switch)
-        copyimg, copypaint, centroids, switch = KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch)    
-        
-       
+
         cv2.imshow('mask',mask)
         
         cv2.imshow('Image with Centroid', img)
