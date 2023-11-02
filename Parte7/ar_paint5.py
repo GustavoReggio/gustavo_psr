@@ -27,8 +27,6 @@ brush_stats = {'pencil_down': False,'size':10,'color':(0,0,0),'previous_x': 0,'p
 centroid_tuple = namedtuple('centroid_tuple',['x','y'])
 usp_sensitivity = 1000
 
-
-# NEEDS CORRECTION
 def KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch,mouse):
     key_pressed = cv2.waitKey(50) & 0xFF
 
@@ -378,7 +376,7 @@ def main():
     brush_stats = {'size' : 10, 'color' : (0,0,0)}
     
     mouse =False
-    i = 0
+    
     #cv2.namedWindow("Drawing")
     #cv2.setMouseCallback("Drawing",partial(mouseCallback,points = centroids))
 
@@ -391,6 +389,7 @@ def main():
    #         cv2.createTrackbar("Usp_sensibility","Drawing",usp_sensitivity,400,lambda x:x)
 
 
+    Menu_interface()
 
     while(1):
         ##* ---Updating usp sensibility---
@@ -435,15 +434,7 @@ def main():
         #        print("No centroid found (division by zero)")
         
 
-        # draw(img, mask,src_copypaint,centroids,brush_stats,usp,flip_flop,shape_points,puzzle_mode)
-
-        if i ==0:
-            Menu_interface()
-            i = 1
-        
-        else:
-            continue
-        
+        # draw(img, mask,src_copypaint,centroids,brush_stats,usp,flip_flop,shape_points,puzzle_mode)    
 
 
         copyimg, copypaint, centroids, switch, mouse = KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch, mouse) 
