@@ -20,8 +20,6 @@ from math import sqrt
 import tkinter as tk
 from tkinter import messagebox, Tk, Frame, Menu, ttk
 
-#import imutils
-
 
 brush_stats = {'pencil_down': False,'size':10,'color':(0,0,0),'previous_x': 0,'previous_y': 0}
 centroid_tuple = namedtuple('centroid_tuple',['x','y'])
