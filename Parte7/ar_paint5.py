@@ -308,13 +308,13 @@ def Menu_interface():
     password_label = ttk.Label(root, text="P - Black color")
     password_label.grid(column=0, row=5, sticky=tk.W, padx=5, pady=5)
 
-    password_label = ttk.Label(root, text="M -  Mouse mode")
+    password_label = ttk.Label(root, text="M - Mouse mode")
     password_label.grid(column=0, row=6, sticky=tk.W, padx=5, pady=5)
 
     password_label = ttk.Label(root, text="I - Image Mode")
     password_label.grid(column=0, row=7, sticky=tk.W, padx=5, pady=5)
 
-    password_label = ttk.Label(root, text="X - Ruber")
+    password_label = ttk.Label(root, text="X - Rubber")
     password_label.grid(column=1, row=1, sticky=tk.W, padx=5, pady=5)
 
     password_label = ttk.Label(root, text="C - Clear cavas")
@@ -323,7 +323,7 @@ def Menu_interface():
     password_label = ttk.Label(root, text="W - Saving Draw")
     password_label.grid(column=1, row=3, sticky=tk.W, padx=5, pady=5)
 
-    password_label = ttk.Label(root, text="+ - Encreasing size")
+    password_label = ttk.Label(root, text="+ - Increasing size")
     password_label.grid(column=1, row=4, sticky=tk.W, padx=5, pady=5)
 
     password_label = ttk.Label(root, text="- - Decreasing size")
