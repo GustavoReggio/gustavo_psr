@@ -17,6 +17,9 @@ from functools import partial
 from collections import namedtuple
 from math import sqrt
 
+#import puzzle
+from formats import drawRectangle, drawCircle, drawEllipse
+
 import tkinter as tk
 from tkinter import messagebox, Tk, Frame, Menu, ttk
 
@@ -29,7 +32,7 @@ usp_sensitivity = 1000
 
 
 # NEEDS CORRECTION
-def KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch,mouse):
+def KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch,mouse,flip_flop,shape_points,puzzle_mode):
     key_pressed = cv2.waitKey(50) & 0xFF
 
     if key_pressed == ord('q'):
@@ -104,9 +107,93 @@ def KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch,mouse):
         mouse = False
         print('Vídeo Mode selected')
     
-   
+    elif key_pressed == ord('v'):
+        flip_flop['switcher'] = not flip_flop['switcher']
+    
+    elif key_pressed == ord('k'):
+        
+        rectangle_conditions = (flip_flop['c_counter'] == 0) and (flip_flop['e_counter'] == 0) and len(centroids['x'])>=2
+
+        if rectangle_conditions :
+            flip_flop['r_counter'] += 1
+
+            if flip_flop['r_counter'] == 1:
+                shape_points['ipoints'] = (centroids['x'][-2],centroids['y'][-2] )
+    
+    elif key_pressed == ord('o'):
+
+        circle_conditions = (flip_flop['r_counter'] == 0) and (flip_flop['e_counter'] == 0) and len(centroids['x'])>=2
+
+        if circle_conditions :
+            flip_flop['c_counter'] += 1
+
+            if flip_flop['c_counter'] == 1:
+                shape_points['ipoints'] = (centroids['x'][-2],centroids['y'][-2] )
+           
+    elif key_pressed == ord('e'):
+
+        elipse_conditions = (flip_flop['r_counter'] == 0) and (flip_flop['c_counter'] == 0) and len(centroids['x'])>=2
+
+        if elipse_conditions :
+            flip_flop['e_counter'] += 1
+
+            if flip_flop['e_counter'] == 1:
+                shape_points['ipoints'] = (centroids['x'][-2],centroids['y'][-2] )
+    
+    
+    
+    
     
     return copyimg,copypaint,centroids,switch, mouse
+
+
+def drawingCore(camera_source_img, mask,img_gui,centroids,pencil_options,usp,flip_flop,shape_points,puzzle_mode,puzzle):
+
+        #* ---Filtering the biggest blob in the image---
+
+        cc_mask , cc_centroid = connectedcomponents(mask)
+        cc_masked_camera_image = np.where(cc_mask,mask,0)  
+
+
+        #* ---Drawing a x where the centroid is in the source---
+        # TODO For now will just draw a circle
+        cv2.drawMarker(camera_source_img, cc_centroid, (0,0,0), 0, 30, 3)
+        #cv2.circle(camera_source_img,cc_centroid,10,(0,0,255),-1)
+
+
+        #* ---Storing centroids---
+
+        if cc_centroid.x != -50:
+            centroids['x'].append(cc_centroid.x) # cc_centroid is a namedTuple
+            centroids['y'].append(cc_centroid.y)
+
+        if len(centroids['x']) != len(centroids['y']): # Just for debbuging, may not ever be necessary
+            print("Something went wrong, more x's than y's")
+            exit()
+        
+        if len(centroids['x']) >= 5 :
+            centroids['x'] = centroids['x'][-2:] # If the list gets too big, cleans it back to the last 2, which are needed for drawing
+            centroids['y'] = centroids['y'][-2:] 
+    
+
+
+        #* ---Drawing---
+        if flip_flop['r_counter'] != 0:
+            drawRectangle(img_gui, centroids, pencil_options, shape_points,flip_flop,puzzle_mode,puzzle)
+
+        elif flip_flop['c_counter'] != 0:
+            drawCircle(img_gui, centroids, pencil_options, shape_points, flip_flop,puzzle_mode,puzzle)
+
+        elif flip_flop['e_counter'] != 0:
+            drawEllipse(img_gui, centroids, pencil_options, shape_points, flip_flop,puzzle_mode,puzzle)
+
+        else:
+            drawLine(img_gui,centroids,pencil_options,usp)
+   
+        #* ---Showing biggest object in mask---
+
+        #! This is here because cc_masked_camera_image is only relevant inside this fc and didn't want to have it as output
+        cv2.imshow("Biggest Object in Mask",cc_masked_camera_image)
 
 
 def mouseCallback(event,x,y,flag,param,copypaint,brush_stats):
