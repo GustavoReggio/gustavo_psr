@@ -377,28 +377,10 @@ def main():
     
     mouse =False
     
-    #cv2.namedWindow("Drawing")
-    #cv2.setMouseCallback("Drawing",partial(mouseCallback,points = centroids))
-
-   ##* ---Adding trackbar to change usp sensibility if on---
-#
-   # if usp:
-   #     if puzzle_mode:
-   #         cv2.createTrackbar("Usp_sensibility","Puzzle",usp_sensitivity,400,lambda x:x)
-   #     elif normal_mode:
-   #         cv2.createTrackbar("Usp_sensibility","Drawing",usp_sensitivity,400,lambda x:x)
-
 
     Menu_interface()
 
     while(1):
-        ##* ---Updating usp sensibility---
-#
-        #
-        #if puzzle_mode:
-        #    usp_sensitivity = cv2.getTrackbarPos("Usp_sensibility","Puzzle")
-        #elif normal_mode:
-        #    usp_sensitivity = cv2.getTrackbarPos("Usp_sensibility","Drawing")
 
 
         # atualizar camara
@@ -411,39 +393,9 @@ def main():
         upper = np.array([high_H, high_S, high_V])
         lower = np.array([low_H,low_S,low_V])
         mask = cv2.inRange(hsv, lower, upper)
-        
-        
-        #num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(mask, connectivity=4)
-        
-        
-        #if num_labels > 1:
-        #    
-        #    largest_component_label = np.argmax(stats[1:, cv2.CC_STAT_AREA]) + 1
-        #    # Create a mask containing only the largest component
-        #    largest_component_mask = np.uint8(labels == largest_component_label) * 255
-        #
-        #    # Calculate moments of the largest component
-        #    moments = cv2.moments(largest_component_mask)
-#
-        #    # Calculate the centroid coordinates
-        #    if moments["m00"] != 0:
-        #        cx = int(moments["m10"] / moments["m00"])
-        #        cy = int(moments["m01"] / moments["m00"])
-        #        
-        #    else:
-        #        print("No centroid found (division by zero)")
-        
-
-        # draw(img, mask,src_copypaint,centroids,brush_stats,usp,flip_flop,shape_points,puzzle_mode)    
-
-
+    
         copyimg, copypaint, centroids, switch, mouse = KeyboardpresS(img,brush_stats,copypaint,copyimg,centroids,switch, mouse) 
         SelectingMode(img,mask,copypaint,copyimg,centroids,brush_stats,usp,switch, mouse)
-
-        #draw(img,mask,copypaint,copyimg,centroids,brush_stats,usp,switch)
-
-           
-        
         
         cv2.imshow('mask',mask)
         
